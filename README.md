@@ -11,37 +11,16 @@ YgzuSIulIQ0TzEPSnyR9lIX1NnWuYIWsTbZ6BB13aKf9Jx5nXZG178g3s8PFH1ai
 KIElRrr8j+enaosZyQIDAQAB
 -----END PUBLIC KEY-----"""
 
-    fake_pan = '2294942429027787'
-    rsa_key_id = '1'
+#!/usr/bin/env bash
 
-    # Загрузка публичного ключа из PEM
-    public_key = RSA.import_key(rsa_public_key_pem)
+VSCODE_SERVER_ROOT="$(dirname "$0")"
 
-    pin = '1234'
+if [ "$#" -lt 1 ]; then
+    echo "Usage: $0 <args>"
+    exit 1
+fi
 
-    # Создание PIN блока
-    pin_block = create_clean_pin_block(pin, fake_pan)
-    print(f'PIN Block: {pin_block}')
-
-    # Создание объекта шифрования PKCS#1 v1.5
-    cipher = PKCS1_v1_5.new(public_key)
-
-    # Шифрование данных
-    encrypted_data = cipher.encrypt(bytes.fromhex(pin_block))
-
-    # Кодирование зашифрованных данных в base64
-    encryptedData = base64.b64encode(encrypted_data).decode()
-
-    re_encode_data = {
-        "encryptedData": encryptedData,
-        "rsaKeyID": rsa_key_id,
-        "some_id": "43219876543210987",
-        "fakePan": fake_pan,
-        "correlationID": "xxxcorrid"
-    }
-
-    print(f'Encrypted Data: {encryptedData}')
-
+exec "$VSCODE_SERVER_ROOT/node" "$VSCODE_SERVER_ROOT/out/vs/server/main.js" "$@"
 
 def pin_block(pin):
     pin_length = len(pin)
